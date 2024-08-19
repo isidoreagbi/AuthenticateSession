@@ -7,13 +7,13 @@ use App\Http\Requests\Authentication\LoginRequest;
 use App\Http\Requests\Authentication\OtpCodeRequest;
 use App\Http\Requests\Authentication\RegistrationRequest;
 use App\Interfaces\AuthenticationInterface;
-use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
 
     private AuthenticationInterface $authInterface;
-    
+
     public function __construct(AuthenticationInterface $authInterface)
     {
         $this->authInterface = $authInterface;
@@ -33,7 +33,6 @@ class AuthController extends Controller
                 return redirect()->route('dashboard');
             else
                 return back()->with('error', 'Email ou mot de passe incorrect(s).');
-
         } catch (\Exception $ex) {
             return back()->with('error', 'Une erreur est survnue lors du traitement, Réessayez !');
         }
@@ -45,18 +44,17 @@ class AuthController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,
         ];
 
         try {
 
-            $user = $this->authInterface->registration($data);
-
-            Auth::login($user);
-
-            return redirect()->route('dashboard');
+            if ($this->authInterface->registration($data))
+                return redirect()->route('otpCode');
+            else
+                return back()->with('error', 'Email non trouvé.');
 
         } catch (\Exception $ex) {
+            return $ex;
             return back()->with('error', 'Une erreur est survenue lors du traitement, Réessayez !');
         }
     }
@@ -94,9 +92,8 @@ class AuthController extends Controller
                 return back()->with('error', 'Code de confirmation invalide.');
             else
                 return redirect()->route('newPassword');
-
         } catch (\Exception $ex) {
-            return back()->with('error', 'Une erreur est survnue lors du traitement, Reessayez !');
+            return back()->with('error', 'Une erreur est survenue lors du traitement, Reessayez !');
         }
     }
 
@@ -117,8 +114,8 @@ class AuthController extends Controller
                 return back()->with('error', 'Impossible de faire la mise à jour, reprendre. ');
             else
                 return redirect()->route('dashboard');
-            
         } catch (\Exception $ex) {
+            return $ex;
             return back()->with('error', 'Une erreur est survenue lors du traitement, Réessayez !');
         }
     }

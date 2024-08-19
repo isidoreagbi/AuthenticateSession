@@ -1,5 +1,1 @@
-.dashboard{
-    display: flex;
-    align-items: center;
-
-}
+@import 'bootstrap/dist/css/bootstrap.min.css';

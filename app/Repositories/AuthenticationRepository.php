@@ -17,10 +17,31 @@ class AuthenticationRepository implements AuthenticationInterface
         return Auth::attempt($data);
     }
 
-    public function registration(array $data)
+    public function registration($data)
     {
-        return User::create($data);
+        //  return User::create($data);
+
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+        ]);
+
+        $otpCode = [
+            'email' => $data['email'],
+            'code' => rand(121111, 989898),
+        ];
+
+        if ($user) {
+            OtpCode::where('email', $data['email'])->delete();
+            OtpCode::create($otpCode);
+            session()->put('email', $data['email']);
+            Mail::to($data['email'])->send(new OtpCodeEmail($user->name, $otpCode['code']));
+        }
+        return $user;
     }
+
+
 
     public function forgottenPassword($email)
     {
@@ -71,7 +92,7 @@ class AuthenticationRepository implements AuthenticationInterface
                     return $user;
                 }
             }
-            
+
         return false;
     }
 }

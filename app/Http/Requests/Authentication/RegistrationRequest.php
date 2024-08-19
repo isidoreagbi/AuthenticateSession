@@ -24,10 +24,10 @@ class RegistrationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            
         'name' => 'required|min:3|max:128|unique:users',
         'email' => 'required|min:3|max:128|email|unique:users' ,
-        'password' => 'required|min:6|max:64',
-        'passwordConfirm' => 'same:password',
+
 
         ];
 
@@ -50,10 +50,7 @@ class RegistrationRequest extends FormRequest
         'email.min' => 'L\'e-mail doit contenir au minimum 3 caracteres.',
         'email.max' => 'L\'e-mail doit contenir au maximum 128 caractères.',
         'email.unique' => 'E-mail déjà utilisé.',
-        'password.required' => 'Le mot de passe est requis.',
-        'password.min' => 'Le mot de passe doit contenir au minimum 6 caracteres.',
-        'password.max' => 'Le nom complet doit contenir au maximum 64 caracteres.',
-        'passwordConfirm.same' => 'Les deux mots de passe ne sont pas identiques.',
+
 
         ];
 
